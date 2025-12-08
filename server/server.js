@@ -167,20 +167,40 @@ app.post('/logout', async (req, res) => {
     if (client) {
       await client.destroy();
       isClientReady = false;
-      console.log('Client destroyed, reinitializing...');
+      console.log('Client destroyed');
+      
+      // Hapus folder session
+      const sessionPath = path.join(__dirname, '.wwebjs_auth');
+      if (fs.existsSync(sessionPath)) {
+        fs.rmSync(sessionPath, { recursive: true, force: true });
+        console.log('Session folder deleted');
+      }
       
       // Wait a bit before reinitializing
       setTimeout(() => {
+        console.log('Reinitializing client...');
         initializeClient();
-      }, 2000);
+      }, 3000);
     }
     res.json({ status: 'success', message: 'Logout berhasil' });
   } catch (error) {
     console.error('Logout error:', error);
+    
+    // Coba hapus folder session meskipun error
+    try {
+      const sessionPath = path.join(__dirname, '.wwebjs_auth');
+      if (fs.existsSync(sessionPath)) {
+        fs.rmSync(sessionPath, { recursive: true, force: true });
+        console.log('Session folder deleted (error recovery)');
+      }
+    } catch (e) {
+      console.error('Failed to delete session folder:', e);
+    }
+    
     // Reinitialize anyway
     setTimeout(() => {
       initializeClient();
-    }, 2000);
+    }, 3000);
     res.json({ status: 'success', message: 'Logout berhasil' });
   }
 });
