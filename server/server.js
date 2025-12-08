@@ -12,13 +12,19 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: { 
-    origin: ["http://localhost:3000", "https://bismillah-lillah.vercel.app", /\.ngrok-free\.app$/, /\.ngrok\.io$/],
+    origin: ["http://localhost:3000", "https://bismillah-lillah.vercel.app", /\.ngrok-free\.app$/, /\.ngrok\.io$/, /\.ngrok-free\.dev$/],
     credentials: true
-  }
+  },
+  transports: ['websocket', 'polling'],
+  pingTimeout: 60000,
+  pingInterval: 25000,
+  upgradeTimeout: 30000,
+  maxHttpBufferSize: 1e8,
+  allowEIO3: true
 });
 
 app.use(cors({
-  origin: ["http://localhost:3000", "https://bismillah-lillah.vercel.app", /\.ngrok-free\.app$/, /\.ngrok\.io$/],
+  origin: ["http://localhost:3000", "https://bismillah-lillah.vercel.app", /\.ngrok-free\.app$/, /\.ngrok\.io$/, /\.ngrok-free\.dev$/],
   credentials: true
 }));
 app.use(express.json());

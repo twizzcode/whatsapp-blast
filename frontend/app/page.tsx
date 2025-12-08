@@ -87,10 +87,12 @@ export default function Home() {
   // Initialize socket connection
   useEffect(() => {
     const newSocket = io(API_URL, {
-      transports: ['websocket', 'polling'],
+      transports: ['websocket'],
       reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 2000,
+      timeout: 20000,
+      forceNew: true,
     });
 
     newSocket.on('connect', () => {
@@ -99,6 +101,10 @@ export default function Home() {
 
     newSocket.on('connect_error', (error) => {
       console.error('Socket connection error:', error);
+    });
+
+    newSocket.on('disconnect', (reason) => {
+      console.log('Socket disconnected:', reason);
     });
 
     setSocket(newSocket);
