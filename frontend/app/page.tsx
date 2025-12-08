@@ -373,7 +373,7 @@ export default function Home() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                className="w-full border-2 text-black border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                 placeholder="Masukkan username"
                 required
               />
@@ -387,7 +387,7 @@ export default function Home() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                className="w-full border-2 text-black border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                 placeholder="Masukkan password"
                 required
               />
@@ -407,9 +407,6 @@ export default function Home() {
             </button>
           </form>
 
-          <div className="mt-6 text-center text-xs text-gray-500">
-            Default: admin / admin123
-          </div>
         </div>
       </div>
     );
