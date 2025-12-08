@@ -11,10 +11,16 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
-  cors: { origin: "http://localhost:3000" } // Izinkan Next.js akses
+  cors: { 
+    origin: ["http://localhost:3000", "https://bismillah-lillah.vercel.app", /\.ngrok-free\.app$/, /\.ngrok\.io$/],
+    credentials: true
+  }
 });
 
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:3000", "https://bismillah-lillah.vercel.app", /\.ngrok-free\.app$/, /\.ngrok\.io$/],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -75,9 +81,15 @@ const initializeClient = () => {
   });
 
   client.on('qr', (qr) => {
+    console.log('QR Code event triggered');
     qrcode.toDataURL(qr, (err, url) => {
+      if (err) {
+        console.error('Error generating QR code:', err);
+        return;
+      }
+      console.log('QR Code generated, emitting to clients...');
       io.emit('qr', url);
-      console.log('QR Code generated');
+      console.log('QR Code emitted successfully');
     });
   });
 
@@ -105,6 +117,15 @@ const initializeClient = () => {
 
 // Initialize client on startup
 initializeClient();
+
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
+  
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+});
 
 // Login endpoint
 app.post('/login', (req, res) => {

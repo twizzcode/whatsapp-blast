@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-const socket = io(API_URL);
 
 interface Contact {
   phone: string;
@@ -53,6 +52,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<"blast" | "history">("blast");
   const [history, setHistory] = useState<BlastHistory[]>([]);
   const [selectedHistory, setSelectedHistory] = useState<BlastHistory | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   // Blast Settings
   const [settings, setSettings] = useState<BlastSettings>({
@@ -84,9 +84,36 @@ export default function Home() {
     });
   }, [contacts]);
 
+  // Initialize socket connection
   useEffect(() => {
+    const newSocket = io(API_URL, {
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    newSocket.on('connect', () => {
+      console.log('Socket connected successfully');
+    });
+
+    newSocket.on('connect_error', (error) => {
+      console.error('Socket connection error:', error);
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+
     // Listen QR Code
     socket.on("qr", (qrUrl: string) => {
+      console.log('QR Code received from server');
       setQrCode(qrUrl);
       setIsReady(false);
     });
@@ -122,7 +149,7 @@ export default function Home() {
       socket.off("blast-progress");
       socket.off("blast-completed");
     };
-  }, []);
+  }, [socket]);
 
   const handleUploadExcel = async () => {
     if (!excelFile) {
