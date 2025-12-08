@@ -1140,7 +1140,7 @@ export default function Home() {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                 <h2 className="text-xl font-semibold mb-4 text-black">Riwayat Blast</h2>
-                {history.length === 0 ? (
+                {!history || history.length === 0 ? (
                   <div className="text-center py-16">
                     <p className="text-gray-500">Belum ada history blast</p>
                   </div>
