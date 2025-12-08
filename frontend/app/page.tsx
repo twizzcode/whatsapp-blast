@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import axios from "axios";
 
-const socket = io("https://31ece4ce9583.ngrok-free.app"); // Ganti dengan URL server Anda
+const socket = io("https://wa.twizzcode.my.id"); // Ganti dengan URL server Anda
 
 interface Contact {
   phone: string;
@@ -149,7 +149,7 @@ export default function Home() {
 
     try {
       const response = await axios.post(
-        "https://31ece4ce9583.ngrok-free.app/upload-excel",
+        "https://wa.twizzcode.my.id/upload-excel",
         formData
       );
       clearInterval(typingInterval);
@@ -181,7 +181,7 @@ export default function Home() {
     setLoginError("");
 
     try {
-      const response = await axios.post("https://31ece4ce9583.ngrok-free.app/login", {
+      const response = await axios.post("https://wa.twizzcode.my.id/login", {
         username,
         password,
       });
@@ -210,7 +210,7 @@ export default function Home() {
   const handleLogoutWhatsApp = async () => {
     if (confirm("Apakah Anda yakin ingin logout WhatsApp? Ini akan memutus koneksi WhatsApp dan Anda harus scan QR code lagi.")) {
       try {
-        await axios.post("https://31ece4ce9583.ngrok-free.app/logout");
+        await axios.post("https://wa.twizzcode.my.id/logout");
         setIsReady(false);
         setQrCode("");
         alert("WhatsApp berhasil logout. Scan QR code untuk login kembali.");
@@ -238,7 +238,7 @@ export default function Home() {
 
   const loadHistory = async () => {
     try {
-      const response = await axios.get("https://31ece4ce9583.ngrok-free.app/history");
+      const response = await axios.get("https://wa.twizzcode.my.id/history");
       setHistory(response.data.data);
     } catch (error) {
       console.error("Failed to load history:", error);
@@ -247,7 +247,7 @@ export default function Home() {
 
   const viewHistoryDetail = async (id: string) => {
     try {
-      const response = await axios.get(`https://31ece4ce9583.ngrok-free.app/history/${id}`);
+      const response = await axios.get(`https://wa.twizzcode.my.id/history/${id}`);
       setSelectedHistory(response.data.data);
     } catch (error) {
       console.error("Failed to load history detail:", error);
@@ -257,7 +257,7 @@ export default function Home() {
   const deleteHistory = async (id: string) => {
     if (confirm("Hapus history ini?")) {
       try {
-        await axios.delete(`https://31ece4ce9583.ngrok-free.app/history/${id}`);
+        await axios.delete(`https://wa.twizzcode.my.id/history/${id}`);
         loadHistory();
         if (selectedHistory?.id === id) {
           setSelectedHistory(null);
@@ -300,7 +300,7 @@ export default function Home() {
     }
 
     try {
-      await axios.post("https://31ece4ce9583.ngrok-free.app/send-blast", formData);
+      await axios.post("https://wa.twizzcode.my.id/send-blast", formData);
     } catch (error) {
       console.error(error);
       alert("Gagal mengirim blast");
