@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import axios from "axios";
 
-const socket = io("https://unobservant-florencia-rheumatically.ngrok-free.dev"); // Ganti dengan URL server Anda
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const socket = io(API_URL);
 
 interface Contact {
   phone: string;
@@ -149,7 +150,7 @@ export default function Home() {
 
     try {
       const response = await axios.post(
-        "https://unobservant-florencia-rheumatically.ngrok-free.dev/upload-excel",
+        `${API_URL}/upload-excel`,
         formData
       );
       clearInterval(typingInterval);
@@ -181,7 +182,7 @@ export default function Home() {
     setLoginError("");
 
     try {
-      const response = await axios.post("https://unobservant-florencia-rheumatically.ngrok-free.dev/login", {
+      const response = await axios.post(`${API_URL}/login`, {
         username,
         password,
       });
@@ -210,7 +211,7 @@ export default function Home() {
   const handleLogoutWhatsApp = async () => {
     if (confirm("Apakah Anda yakin ingin logout WhatsApp? Ini akan memutus koneksi WhatsApp dan Anda harus scan QR code lagi.")) {
       try {
-        await axios.post("https://unobservant-florencia-rheumatically.ngrok-free.dev/logout");
+        await axios.post(`${API_URL}/logout`);
         setIsReady(false);
         setQrCode("");
         alert("WhatsApp berhasil logout. Scan QR code untuk login kembali.");
@@ -238,7 +239,7 @@ export default function Home() {
 
   const loadHistory = async () => {
     try {
-      const response = await axios.get("https://unobservant-florencia-rheumatically.ngrok-free.dev/history");
+      const response = await axios.get(`${API_URL}/history`);
       setHistory(response.data.data);
     } catch (error) {
       console.error("Failed to load history:", error);
@@ -247,7 +248,7 @@ export default function Home() {
 
   const viewHistoryDetail = async (id: string) => {
     try {
-      const response = await axios.get(`https://unobservant-florencia-rheumatically.ngrok-free.dev/history/${id}`);
+      const response = await axios.get(`${API_URL}/history/${id}`);
       setSelectedHistory(response.data.data);
     } catch (error) {
       console.error("Failed to load history detail:", error);
@@ -257,7 +258,7 @@ export default function Home() {
   const deleteHistory = async (id: string) => {
     if (confirm("Hapus history ini?")) {
       try {
-        await axios.delete(`https://unobservant-florencia-rheumatically.ngrok-free.dev/history/${id}`);
+        await axios.delete(`${API_URL}/history/${id}`);
         loadHistory();
         if (selectedHistory?.id === id) {
           setSelectedHistory(null);
@@ -300,7 +301,7 @@ export default function Home() {
     }
 
     try {
-      await axios.post("https://unobservant-florencia-rheumatically.ngrok-free.dev/send-blast", formData);
+      await axios.post(`${API_URL}/send-blast`, formData);
     } catch (error) {
       console.error(error);
       alert("Gagal mengirim blast");
