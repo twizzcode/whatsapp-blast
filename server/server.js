@@ -15,12 +15,13 @@ const io = socketIO(server, {
     origin: ["http://localhost:3000", "https://bismillah-lillah.vercel.app", /\.ngrok-free\.app$/, /\.ngrok\.io$/, /\.ngrok-free\.dev$/],
     credentials: true
   },
-  transports: ['websocket', 'polling'],
-  pingTimeout: 60000,
-  pingInterval: 25000,
-  upgradeTimeout: 30000,
-  maxHttpBufferSize: 1e8,
-  allowEIO3: true
+  transports: ['websocket'],
+  pingTimeout: 30000,
+  pingInterval: 15000,
+  upgradeTimeout: 10000,
+  maxHttpBufferSize: 1e6,
+  perMessageDeflate: false,
+  httpCompression: false
 });
 
 app.use(cors({
@@ -72,17 +73,33 @@ const initializeClient = () => {
   client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: { 
-      headless: true, 
+      headless: true,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage', // PENTING: Mencegah crash memori di Linux/Docker
+        '--disable-dev-shm-usage',
         '--disable-accelerated-2d-canvas',
         '--no-first-run',
         '--no-zygote',
-        '--single-process', 
-        '--disable-gpu'
-      ] 
+        '--single-process',
+        '--disable-gpu',
+        '--disable-software-rasterizer',
+        '--disable-extensions',
+        '--disable-background-networking',
+        '--disable-default-apps',
+        '--disable-sync',
+        '--metrics-recording-only',
+        '--mute-audio',
+        '--no-default-browser-check',
+        '--no-pings',
+        '--disable-logging',
+        '--disable-permissions-api'
+      ],
+      headless: 'new'
+    },
+    webVersionCache: {
+      type: 'remote',
+      remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html',
     }
   });
 
