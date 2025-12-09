@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import axios from "axios";
 
@@ -224,9 +224,10 @@ export default function Home() {
         setIsAuthenticated(true);
         localStorage.setItem("isAuthenticated", "true");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { message?: string } } };
       setLoginError(
-        error.response?.data?.message || "Login gagal. Coba lagi."
+        axiosError.response?.data?.message || "Login gagal. Coba lagi."
       );
     }
   };
@@ -263,21 +264,21 @@ export default function Home() {
     }
   }, []);
 
-  // Load history when authenticated
-  useEffect(() => {
-    if (isAuthenticated && activeTab === "history") {
-      loadHistory();
-    }
-  }, [isAuthenticated, activeTab]);
-
-  const loadHistory = async () => {
+  const loadHistory = useCallback(async () => {
     try {
       const response = await axios.get(`${API_URL}/history`);
       setHistory(response.data.data);
     } catch (error) {
       console.error("Failed to load history:", error);
     }
-  };
+  }, []);
+
+  // Load history when authenticated
+  useEffect(() => {
+    if (isAuthenticated && activeTab === "history") {
+      loadHistory();
+    }
+  }, [isAuthenticated, activeTab, loadHistory]);
 
   const viewHistoryDetail = async (id: string) => {
     try {
