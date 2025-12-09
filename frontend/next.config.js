@@ -2,10 +2,11 @@
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: false,
+    dirs: ['app'],
   },
   typescript: {
     ignoreBuildErrors: false,
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
